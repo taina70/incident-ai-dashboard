@@ -24,54 +24,90 @@ onMounted(loadData);
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-6 space-y-8">
-    <!-- Header -->
-    <header class="flex justify-between items-center border-b border-slate-800 pb-4">
-      <div>
-        <h1 class="text-2xl font-bold text-white">🤖 Incident AI Monitor</h1>
-        <p class="text-slate-400 text-sm">Análise em tempo real via NestJS, RabbitMQ e Gemini AI</p>
-      </div>
-      <button @click="loadData" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm border border-slate-700 transition">
-        🔄 Atualizar Feed
-      </button>
-    </header>
-
-    <!-- Grid Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <LogForm @log-sent="loadData" />
-
-      <!-- Feed de Incidentes -->
-      <div class="lg:col-span-2 space-y-4">
-        <h2 class="text-lg font-semibold text-slate-200">Análises de Incidentes (IA)</h2>
-
-        <div v-if="loading" class="text-center py-12 text-slate-500">Carregando incidentes...</div>
-
-        <div v-else-if="analyses.length === 0" class="text-center py-12 bg-slate-800/30 rounded-xl border border-slate-800 text-slate-500">
-          Nenhum incidente registrado até o momento.
-        </div>
-
-        <div v-else class="space-y-3">
-          <div 
-            v-for="item in analyses" 
-            :key="item.id" 
-            @click="selectedAnalysis = item"
-            class="p-4 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 hover:border-indigo-500/50 rounded-xl cursor-pointer transition space-y-2"
-          >
-            <div class="flex justify-between items-start">
-              <span class="px-2 py-0.5 text-xs font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded">
-                {{ item.serviceName }}
-              </span>
-              <span class="text-xs text-slate-500">{{ new Date(item.createdAt).toLocaleString() }}</span>
-            </div>
-            <p class="text-sm font-medium text-slate-200 line-clamp-2">
-              <strong class="text-rose-400">Causa Raiz:</strong> {{ item.rootCause }}
-            </p>
+  <div class="min-h-screen pb-12">
+    <!-- Header Translúcido -->
+    <header class="border-b border-white/20 bg-white/10 backdrop-blur-md sticky top-0 z-40">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-white/20 rounded-xl border border-white/30 shadow-sm">
+            <span class="text-xl">📊</span>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-white tracking-wide drop-shadow">INCIDENT AI DASHBOARD</h1>
+            <p class="text-xs text-white/80">Painel do Administrador • Monitorização de Erros</p>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Modal Separado -->
+        <button 
+          @click="loadData" 
+          :disabled="loading"
+          class="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white border border-white/40 rounded-xl text-xs font-semibold backdrop-blur-md transition shadow-md cursor-pointer disabled:opacity-50"
+        >
+          <span :class="{ 'animate-spin': loading }">🔄</span>
+          <span>{{ loading ? 'A carregar...' : 'Atualizar' }}</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-6xl mx-auto px-6 pt-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        
+        <!-- Formulário -->
+        <LogForm @log-sent="loadData" />
+
+        <!-- Feed de Incidentes -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center justify-between px-1">
+            <h2 class="text-xs font-bold text-white uppercase tracking-wider drop-shadow">
+              Análises de Incidentes
+            </h2>
+            <span class="px-2.5 py-0.5 text-xs font-semibold bg-white/20 text-white rounded-full border border-white/30 backdrop-blur-sm">
+              {{ analyses.length }} Registo(s)
+            </span>
+          </div>
+
+          <!-- State: Loading -->
+          <div v-if="loading" class="glass-card p-10 text-center rounded-2xl space-y-2">
+            <p class="text-sm font-medium text-white/90">A procurar diagnósticos...</p>
+          </div>
+
+          <!-- State: Vazio -->
+          <div v-else-if="analyses.length === 0" class="glass-card p-10 text-center rounded-2xl space-y-1">
+            <p class="text-base font-semibold text-white">Nenhum incidente registado</p>
+            <p class="text-xs text-white/70">Dispare um log pelo formulário para simular um evento.</p>
+          </div>
+
+          <!-- Cards de Incidentes com Efeito Glass -->
+          <div v-else class="space-y-3">
+            <div 
+              v-for="item in analyses" 
+              :key="item.id" 
+              @click="selectedAnalysis = item"
+              class="glass-card hover:bg-white/25 p-5 rounded-2xl cursor-pointer transition duration-200 space-y-2 shadow-lg hover:shadow-xl"
+            >
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 text-xs font-bold font-mono bg-white/20 text-white border border-white/30 rounded-lg">
+                  {{ item.serviceName }}
+                </span>
+                <span class="text-xs font-medium text-white/70">
+                  {{ new Date(item.createdAt).toLocaleString('pt-PT') }}
+                </span>
+              </div>
+
+              <div>
+                <span class="text-xs font-semibold text-cyan-200 uppercase tracking-wider">Causa Raiz</span>
+                <p class="text-sm text-white font-medium line-clamp-2 mt-0.5">
+                  {{ item.rootCause }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
     <AnalysisModal :analysis="selectedAnalysis" @close="selectedAnalysis = null" />
   </div>
 </template>

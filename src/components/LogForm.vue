@@ -31,20 +31,31 @@ const handleSubmit = async () => {
   }
 };
 </script>
-
 <template>
-  <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700/60 h-fit space-y-4">
-    <h2 class="text-lg font-semibold text-slate-200">Disparar Log de Teste</h2>
-    
+  <div class="glass-card rounded-2xl p-6 space-y-5 shadow-xl">
+    <div class="border-b border-white/20 pb-3">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider drop-shadow">
+        Disparar Log de Teste
+      </h2>
+    </div>
+
     <form @submit.prevent="handleSubmit" class="space-y-4">
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Serviço Origem</label>
-        <input v-model="form.serviceName" type="text" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500" required />
+        <label class="block text-xs font-semibold text-white/90 mb-1">Serviço de Origem</label>
+        <input 
+          v-model="form.serviceName" 
+          type="text" 
+          class="glass-input w-full rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-white/50 transition" 
+          required 
+        />
       </div>
 
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Severidade</label>
-        <select v-model="form.severity" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+        <label class="block text-xs font-semibold text-white/90 mb-1">Severidade</label>
+        <select 
+          v-model="form.severity" 
+          class="glass-input w-full rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-white/50 transition [&>option]:text-zinc-900"
+        >
           <option value="INFO">INFO</option>
           <option value="WARN">WARN</option>
           <option value="ERROR">ERROR</option>
@@ -53,12 +64,22 @@ const handleSubmit = async () => {
       </div>
 
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Mensagem do Erro</label>
-        <textarea v-model="form.message" rows="3" placeholder="Ex: ConnectionTimeout: Failed to connect to Redis" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500" required></textarea>
+        <label class="block text-xs font-semibold text-white/90 mb-1">Mensagem do Erro</label>
+        <textarea 
+          v-model="form.message" 
+          rows="3" 
+          placeholder="Ex: ConnectionTimeout ao conectar ao Redis" 
+          class="glass-input w-full rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-white/50 transition" 
+          required
+        ></textarea>
       </div>
 
-      <button type="submit" :disabled="sending" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition disabled:opacity-50 text-sm">
-        {{ sending ? 'Enviando ao RabbitMQ...' : 'Enviar para Fila' }}
+      <button 
+        type="submit" 
+        :disabled="sending" 
+        class="w-full bg-white hover:bg-white/90 text-indigo-900 font-bold py-2.5 rounded-xl text-xs transition duration-150 shadow-md cursor-pointer disabled:opacity-50"
+      >
+        {{ sending ? 'A enviar...' : 'Enviar Evento' }}
       </button>
     </form>
   </div>
